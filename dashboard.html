@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Gamer Ashab Top up House</title>
+    <style>
+        /* আপনার বর্তমান CSS এখানে থাকবে */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            margin: 0;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .navbar {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .navbar button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .navbar button:hover {
+            background-color: #0056b3;
+        }
+        .section {
+            display: none; /* ডিফল্টভাবে সব সেকশন লুকানো থাকবে */
+            max-width: 800px;
+            margin: 0 auto 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        .section.active {
+            display: block; /* সক্রিয় সেকশন দেখানো হবে */
+        }
+        .input-box {
+            max-width: 400px;
+            margin: 0 auto 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        .input-box label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        .input-box input, .input-box select, .input-box textarea { /* select এবং textarea এলিমেন্টের জন্য স্টাইল যোগ করুন */
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .input-box input:focus, .input-box select:focus, .input-box textarea:focus {
+            border-color: #888;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .card.selected {
+            border: 2px solid #007bff;
+        }
+        .card.out-of-stock {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .card.out-of-stock::after {
+            content: "Out of stock";
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: orange;
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 5px;
+        }
+        .price {
+            margin-top: 10px;
+            font-size: 18px;
+            color: #444;
+        }
+        .buy-button, .add-money-button, .support-button, .logout-button { /* Added .logout-button */
+            display: block;
+            width: 200px;
+            margin: 30px auto 0 auto;
+            padding: 12px 20px;
+            font-size: 18px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .buy-button:hover, .add-money-button:hover, .support-button:hover, .logout-button:hover { /* Added .logout-button */
+            background-color: #218838;
+        }
+        .logout-button { /* Specific style for logout button */
+            background-color: #dc3545; /* Red color for logout */
+        }
+        .logout-button:hover {
+            background-color: #c82333;
+        }
+        .message {
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+            color: #333;
+        }
+        .profile-info p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .payment-instructions {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .payment-instructions h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .payment-instructions ul {
+            list-style: none;
+            padding: 0;
+        }
+        .payment-instructions ul li {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .payment-instructions .account-number {
+            font-weight: bold;
+            color: #007bff;
+        }
+        /* New styles for payment options */
+        .payment-options {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .payment-options label {
+            margin-right: 15px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .payment-options input[type="radio"] {
+            margin-right: 5px;
+        }
+        /* Styles for the ad space */
+        .ad-space {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff3cd; /* Light yellow background for notice */
+            border: 1px solid #ffeeba;
+            border-radius: 8px;
+            padding: 15px 20px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            color: #856404; /* Darker yellow text */
+        }
+        .ad-space h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+        .ad-space p {
+            margin-bottom: 5px;
+            font-size: 15px;
+        }
+        .ad-space img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        /* --- Chat System Specific Styles --- */
+        .chat-box {
+            max-width: 500px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: 400px; /* Fixed height for chat area */
+            border: 1px solid #ddd;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto; /* Scrollable message area */
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word; /* Wrap long words */
+        }
+        .chat-message.user {
+            background-color: #dcf8c6; /* Green for user messages */
+            align-self: flex-end; /* Align to the right */
+            margin-left: auto;
+        }
+        .chat-message.admin {
+            background-color: #e0e0e0; /* Grey for admin messages */
+            align-self: flex-start; /* Align to the left */
+            margin-right: auto;
+        }
+        .chat-message-username { /* Style for username in chat */
+            font-size: 0.8em;
+            color: #555;
+            margin-bottom: 3px;
+            display: block;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input-area input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        .chat-input-area button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .chat-input-area button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gamer Ashab Top up House</h1>
+
+    <div class="navbar">
+        <button onclick="showSection('dashboard')">Dashboard</button>
+        <button onclick="showSection('my-profile')">My Profile</button>
+    </div>
+
+    <div id="dashboard-section" class="section active">
+        <p><strong>Account Balance:</strong> ৳ <span id="dashboard-balance">0</span></p>
+
+        <div class="ad-space" id="dynamic-ad-space">
+            <h3>📢 গুরুত্বপূর্ণ ঘোষণা!</h3>
+            <p>আমাদের নতুন অফারগুলো দেখুন! দ্রুত টপ-আপ করুন এবং আকর্ষণীয় ডিসকাউন্ট উপভোগ করুন।</p>
+            <p>যোগাযোগের জন্য: <a href="tel:+8801234567890">01234567890</a></p>
+        </div>
+        <div class="input-box">
+            <label for="player-id">Player ID</label>
+            <input type="text" id="player-id" placeholder="Enter Player ID" />
+        </div>
+
+        <div class="grid" id="package-grid">
+            </div>
+
+        <div class="payment-options">
+            <input type="radio" id="pay-wallet" name="payment_method" value="wallet" checked>
+            <label for="pay-wallet">My Wallet</label>
+            <input type="radio" id="pay-bkash-nagad" name="payment_method" value="bkash_nagad">
+            <label for="pay-bkash-nagad">Bkash / Nagad</label>
+        </div>
+
+        <button class="buy-button" onclick="buyNow()">Buy Now</button>
+        <div class="message" id="message"></div>
+    </div>
+
+    <div id="my-profile-section" class="section">
+        <h2>My Profile</h2>
+        <div class="profile-info">
+            <p><strong>Username:</strong> <span id="display-username"></span></p>
+            <p><strong>Current Balance:</strong> ৳ <span id="current-balance">0</span></p>
+            <button class="add-money-button" onclick="showAddMoney()">Add Money</button>
+            <button class="support-button" onclick="showSection('chat')">Support Box</button>
+            <button class="logout-button" onclick="logout()">Log out</button> <div class="message" id="profile-message" style="margin-top: 10px;"></div>
+        </div>
+
+        <div id="add-money-form" class="input-box" style="display: none; margin-top: 20px;">
+            <h3>Add Money via Bkash / Nagad</h3>
+            <div class="payment-instructions">
+                <h3>নির্দেশাবলী:</h3>
+                <ul>
+                    <li>আপনি যেই পরিমাণ টাকা যোগ করতে চান, তা নিচের Bkash/Nagad নম্বরে **"Send Money"** করুন:</li>
+                    <li>Bkash Personal: <span class="account-number">01994727528</span> (উদাহরণ)</li>
+                    <li>Nagad Personal: <span class="account-number">01994727528</span> (উদাহরণ)</li>
+                    <li>টাকা পাঠানোর পর প্রাপ্ত **TrxID (Transaction ID)** নিচের ইনপুট বক্সে লিখুন।</li>
+                    <li>আপনার টাকা ২৪-৪৮ ঘন্টার মধ্যে আপনার অ্যাকাউন্টে যোগ হয়ে যাবে।</li>
+                </ul>
+            </div>
+            <label for="amount-to-add">পরিমাণ (Amount)</label>
+            <input type="number" id="amount-to-add" placeholder="যোগ করার পরিমাণ লিখুন (টাকা)" min="1" />
+
+            <label for="payment-method">পেমেন্ট পদ্ধতি</label>
+            <select id="payment-method">
+                <option value="">নির্বাচন করুন</option>
+                <option value="bkash">Bkash</option>
+                <option value="nagad">Nagad</option>
+            </select>
+
+            <label for="transaction-id">TrxID (Transaction ID)</label>
+            <input type="text" id="transaction-id" placeholder="TrxID লিখুন" />
+
+            <button class="add-money-button" onclick="submitAddMoney()">জমা দিন (Submit)</button>
+        </div>
+    </div>
+
+    <div id="chat-section" class="section">
+        <h2>Support Box</h2>
+        <div class="chat-box">
+            <div class="chat-messages" id="chat-messages">
+                </div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Type your message..." />
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script>
+        // Firebase Configuration (REPLACE WITH YOUR ACTUAL CONFIG)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDLbP9pxW4jJhS4_cRBLu9DFAJcIx-k0bo",
+            authDomain: "geme-top-up-app.firebaseapp.com",
+            databaseURL: "https://geme-top-up-app-default-rtdb.firebaseio.com",
+            projectId: "geme-top-up-app",
+            storageBucket: "geme-top-up-app.firebasestorage.app",
+            messagingSenderId: "546994821414",
+            appId: "1:546994821414:web:ec627ac4e79288e9dd49e7",
+            measurementId: "G-4SYCYMJ46F"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const auth = firebase.auth(); // Initialize Firebase Auth
+
+        const adsRef = db.ref("advertisements"); // Reference to the advertisements node
+        const addMoneyRequestsRef = db.ref("addMoneyRequests"); // Reference for add money requests
+        const packagesRef = db.ref("packages"); // NEW: Reference for packages
+        // Removed paymentRequestsRef from here, as it's handled differently for redirect
+
+        let selectedCard = null;
+        let currentBalance = 0; // ব্যবহারকারীর ব্যালেন্স ট্র্যাক করার জন্য
+        let loggedInUsername = "GuestUser"; // Global variable to store the username, default to GuestUser
+        let userRef = null; // Reference to the current user's data in the database
+        let userChatRef = null; // Reference to the current user's chat thread
+
+        // Initialize user data and set up Auth state listener
+        function initializeUser() {
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    // User is signed in
+                    const userUID = user.uid;
+                    userRef = db.ref("users/" + userUID); // Set the user's database reference
+                    userChatRef = db.ref("chats_user_support/" + userUID); // Set chat reference
+
+                    // Set username based on displayName or a generated one
+                    if (user.displayName) {
+                        loggedInUsername = user.displayName;
+                        document.getElementById('display-username').textContent = loggedInUsername;
+                    }
+
+                    // Listen for changes to the user's data (including balance and username)
+                    userRef.on('value', (snapshot) => {
+                        const userData = snapshot.val();
+                        if (userData) {
+                            // Update username if it's available in DB
+                            if (userData.username) {
+                                loggedInUsername = userData.username;
+                                document.getElementById('display-username').textContent = loggedInUsername;
+                            } else if (!user.displayName) { // If no displayName from auth, and no username in DB, generate one
+                                loggedInUsername = "User_" + Math.floor(Math.random() * 10000);
+                                userRef.update({ username: loggedInUsername }) // Save the generated username
+                                    .catch(error => console.error("Error setting initial username:", error));
+                                document.getElementById('display-username').textContent = loggedInUsername;
+                            }
+
+                            // Update balance
+                            currentBalance = userData.balance ? parseFloat(userData.balance) : 0;
+                            updateBalanceDisplay();
+                        } else {
+                            // If user data doesn't exist, create it with a default balance and username
+                            loggedInUsername = user.displayName || "User_" + Math.floor(Math.random() * 10000);
+                            userRef.set({
+                                username: loggedInUsername,
+                                balance: 0, // Initialize balance to 0
+                                lastActivity: Date.now()
+                            }).then(() => {
+                                currentBalance = 0;
+                                updateBalanceDisplay();
+                                document.getElementById('display-username').textContent = loggedInUsername;
+                            }).catch(error => console.error("Error setting initial user data:", error));
+                        }
+                    }, (errorObject) => {
+                        console.error("The read of user data failed: " + errorObject.name);
+                    });
+
+                    // Load chat messages if the chat section is active
+                    if (document.getElementById('chat-section').classList.contains('active')) {
+                        loadChatMessages();
+                    }
+
+                } else {
+                    // User is signed out, or not yet logged in
+                    userRef = null; // Clear user reference
+                    userChatRef = null; // Clear chat reference
+                    loggedInUsername = "GuestUser";
+                    currentBalance = 0;
+                    updateBalanceDisplay();
+                    document.getElementById('display-username').textContent = loggedInUsername;
+                    console.log("No user signed in.");
+                }
+            });
+        }
+
+        // সেকশন দেখানোর ফাংশন
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId + '-section').classList.add('active');
+
+            // ব্যালেন্স আপডেট করুন (যদিও রিয়েল-টাইম লিসেনার এখন দেখভাল করবে)
+            // updateBalanceDisplay(); // This call is less critical now due to real-time listener
+
+            // যদি প্রোফাইল সেকশন খোলা হয়, Add money form লুকান এবং প্রোফাইল মেসেজ রিসেট করুন
+            if (sectionId === 'my-profile') {
+                document.getElementById('add-money-form').style.display = 'none';
+                document.getElementById('profile-message').textContent = "";
+            } else if (sectionId === 'dashboard') {
+                document.getElementById("message").textContent = ""; // ড্যাশবোর্ড মেসেজ রিসেট করুন
+                loadAds(); // Load ads when dashboard is active
+                loadPackages(); // Load packages when dashboard is active
+            } else if (sectionId === 'chat') {
+                if (userChatRef) { // Only load if userChatRef is set (i.e., user is logged in)
+                    loadChatMessages();
+                } else {
+                    document.getElementById('chat-messages').innerHTML = "<p style='text-align: center; color: #555;'>Please log in to access support chat.</p>";
+                    document.getElementById('chat-input').disabled = true;
+                    document.querySelector('#chat-section .chat-input-area button').disabled = true;
+                }
+            }
+        }
+
+        // ব্যালেন্স ডিসপ্লে আপডেট করার ফাংশন
+        function updateBalanceDisplay() {
+            document.getElementById('current-balance').textContent = currentBalance.toFixed(2); // Display with 2 decimal places
+            document.getElementById('dashboard-balance').textContent = currentBalance.toFixed(2); // Display with 2 decimal places
+        }
+
+        // NEW: Load packages dynamically from Firebase
+        function loadPackages() {
+            const packageGrid = document.getElementById('package-grid');
+            packagesRef.on('value', (snapshot) => {
+                packageGrid.innerHTML = ''; // Clear existing packages
+                if (!snapshot.exists()) {
+                    packageGrid.innerHTML = '<p style="text-align: center; width: 100%; color: #555;">কোনো প্যাকেজ পাওয়া যায়নি।</p>';
+                    return;
+                }
+                snapshot.forEach(childSnapshot => {
+                    const packageId = childSnapshot.key;
+                    const packageData = childSnapshot.val();
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+                    if (packageData.outOfStock) {
+                        card.classList.add('out-of-stock');
+                    }
+                    card.setAttribute('data-package-id', packageId);
+                    card.setAttribute('data-package-name', packageData.name);
+                    card.setAttribute('data-package-price', packageData.price);
+
+                    card.innerHTML = `
+                        ${packageData.name}
+                        <div class="price">৳ ${packageData.price}</div>
+                    `;
+                    
+                    if (!packageData.outOfStock) {
+                        card.addEventListener('click', () => {
+                            if (selectedCard) {
+                                selectedCard.classList.remove('selected');
+                            }
+                            card.classList.add('selected');
+                            selectedCard = card;
+                            document.getElementById("message").textContent = "";
+                        });
+                    }
+                    packageGrid.appendChild(card);
+                });
+            });
+        }
+
+
+        // Buy Now ফাংশন
+        function buyNow() {
+            const playerId = document.getElementById('player-id').value.trim();
+            const messageDiv = document.getElementById("message");
+            const selectedPaymentMethod = document.querySelector('input[name="payment_method"]:checked').value;
+
+            if (!auth.currentUser) {
+                messageDiv.style.color = "red";
+                messageDiv.textContent = "⚠️ কেনাকাটা করার জন্য দয়া করে লগইন করুন!";
+                return;
+            }
+
+            if (!playerId) {
+                messageDiv.style.color = "red";
+                messageDiv.textContent = "⚠️ দয়া করে আপনার Player ID লিখুন!";
+                return;
+            }
+
+            if (!selectedCard) {
+                messageDiv.style.color = "red";
+                messageDiv.textContent = "⚠️ একটি প্যাকেজ নির্বাচন করুন!";
+                return;
+            }
+
+            const packageId = selectedCard.getAttribute('data-package-id');
+            const packageName = selectedCard.getAttribute('data-package-name');
+            const price = parseFloat(selectedCard.getAttribute('data-package-price'));
+
+            if (selectedPaymentMethod === 'wallet') {
+                if (currentBalance < price) {
+                    messageDiv.style.color = "red";
+                    messageDiv.textContent = `⚠️ আপনার যথেষ্ট ব্যালেন্স নেই। ${price} টাকা প্রয়োজন, কিন্তু আপনার আছে ${currentBalance} টাকা।`;
+                    return;
+                }
+
+                // Deduct from balance in Firebase
+                userRef.transaction((currentData) => {
+                    if (currentData) {
+                        if (currentData.balance >= price) {
+                            currentData.balance = (currentData.balance || 0) - price;
+                            return currentData;
+                        } else {
+                            // This means another operation changed balance concurrently
+                            messageDiv.style.color = "red";
+                            messageDiv.textContent = `⚠️ ব্যালেন্স আপডেটে সমস্যা হয়েছে। আবার চেষ্টা করুন।`;
+                            return undefined; // Abort the transaction
+                        }
+                    } else {
+                        return undefined; // Abort if no user data
+                    }
+                }, (error, committed, snapshot) => {
+                    if (error) {
+                        console.error("Transaction failed: ", error);
+                        messageDiv.style.color = "red";
+                        messageDiv.textContent = `❌ লেনদেন ব্যর্থ হয়েছে: ${error.message}`;
+                    } else if (!committed) {
+                        // Transaction aborted (e.g., balance was insufficient after all)
+                        messageDiv.style.color = "red";
+                        messageDiv.textContent = `⚠️ যথেষ্ট ব্যালেন্স না থাকায় লেনদেন বাতিল হয়েছে।`;
+                    } else {
+                        // Transaction committed
+                        messageDiv.style.color = "green";
+                        messageDiv.textContent = `✅ আপনি ${packageName} প্যাকেজটি সফলভাবে কিনেছেন! 🎮 Player ID: ${playerId}`;
+                        // Balance will be updated by the real-time listener
+                    }
+                });
+
+            } else if (selectedPaymentMethod === 'bkash_nagad') {
+                // Construct URL with parameters for payment.html
+                const url = `payment.html?username=${encodeURIComponent(loggedInUsername)}&packageName=${encodeURIComponent(packageName)}&playerId=${encodeURIComponent(playerId)}&amount=${encodeURIComponent(price)}`;
+                window.location.href = url; // Redirect to payment.html with parameters
+            }
+
+            // কেনাকাটার পর কার্ড নির্বাচন বাতিল করুন
+            if (selectedCard) {
+                selectedCard.classList.remove('selected');
+                selectedCard = null;
+            }
+            document.getElementById('player-id').value = ''; // Player ID ইনপুট খালি করুন
+        }
+
+        // Add Money ফর্ম দেখানোর ফাংশন
+        function showAddMoney() {
+            document.getElementById('add-money-form').style.display = 'block';
+            document.getElementById('profile-message').textContent = "";
+        }
+
+        // Add Money সাবমিট করার ফাংশন
+        function submitAddMoney() {
+            const amountToAdd = parseFloat(document.getElementById('amount-to-add').value);
+            const paymentMethod = document.getElementById('payment-method').value;
+            const transactionId = document.getElementById('transaction-id').value.trim();
+            const profileMessageDiv = document.getElementById('profile-message');
+
+            if (!auth.currentUser) {
+                profileMessageDiv.style.color = "red";
+                profileMessageDiv.textContent = "⚠️ টাকা যোগ করার জন্য দয়া করে লগইন করুন!";
+                return;
+            }
+
+            if (isNaN(amountToAdd) || amountToAdd <= 0) {
+                profileMessageDiv.style.color = "red";
+                profileMessageDiv.textContent = "⚠️ অনুগ্রহ করে সঠিক পরিমাণ লিখুন।";
+                return;
+            }
+            if (!paymentMethod) {
+                profileMessageDiv.style.color = "red";
+                profileMessageDiv.textContent = "⚠️ অনুগ্রহ করে পেমেন্ট পদ্ধতি নির্বাচন করুন।";
+                return;
+            }
+            if (!transactionId) {
+                profileMessageDiv.style.color = "red";
+                profileMessageDiv.textContent = "⚠️ অনুগ্রহ করে TrxID লিখুন।";
+                return;
+            }
+
+            // Push payment request to Firebase
+            // Changed path to addMoneyRequests to match admin panel
+            addMoneyRequestsRef.push({ 
+                userId: auth.currentUser.uid,
+                username: loggedInUsername, // Use the globally stored username
+                amount: amountToAdd,
+                paymentMethod: paymentMethod,
+                transactionId: transactionId,
+                status: "pending", // Add a status
+                timestamp: Date.now()
+            }).then(() => {
+                profileMessageDiv.style.color = "orange";
+                profileMessageDiv.textContent = `✅ আপনার ${amountToAdd} টাকা যোগ করার অনুরোধ (${paymentMethod}, TrxID: ${transactionId}) সফলভাবে জমা দেওয়া হয়েছে। ২৪-৪৮ ঘন্টার মধ্যে আপনার ব্যালেন্স আপডেট করা হবে।`;
+
+                // Clear input fields
+                document.getElementById('amount-to-add').value = '';
+                document.getElementById('payment-method').value = '';
+                document.getElementById('transaction-id').value = '';
+            }).catch(error => {
+                profileMessageDiv.style.color = "red";
+                profileMessageDiv.textContent = `❌ পেমেন্ট জমা দিতে ব্যর্থ: ${error.message}`;
+                console.error("Error submitting payment:", error);
+            });
+        }
+
+        // --- Chat System Functions ---
+        function loadChatMessages() {
+            const chatMessagesDiv = document.getElementById('chat-messages');
+            chatMessagesDiv.innerHTML = ""; // Clear existing messages
+
+            if (!userChatRef) {
+                chatMessagesDiv.innerHTML = "<p style='text-align: center; color: #555;'>Please log in to access support chat.</p>";
+                document.getElementById('chat-input').disabled = true;
+                document.querySelector('#chat-section .chat-input-area button').disabled = true;
+                return;
+            }
+
+            // Listen for messages in this user's specific chat thread
+            userChatRef.on("value", (snapshot) => {
+                chatMessagesDiv.innerHTML = ""; // Clear messages before re-rendering
+                const messages = [];
+
+                if (!snapshot.exists()) { // No messages yet, add an initial admin message
+                    messages.push({ sender: 'admin', message: "Hi there! How can I help you today?" });
+                } else {
+                     snapshot.forEach((msgSnap) => {
+                        messages.push(msgSnap.val());
+                    });
+                }
+                
+                messages.forEach(data => {
+                    const messageDiv = document.createElement('div');
+                    // Determine sender for styling: 'user' for user messages, 'admin' for admin messages
+                    messageDiv.classList.add('chat-message', data.sender === 'user' ? 'user' : 'admin');
+
+                    // If the sender is 'user' and a username is available, display it
+                    // Or if it's admin, and an admin_name is set (for future admin panel)
+                    if (data.username && data.sender === 'user') {
+                        const usernameSpan = document.createElement('span');
+                        usernameSpan.classList.add('chat-message-username');
+                        usernameSpan.textContent = data.username + ":";
+                        messageDiv.appendChild(usernameSpan);
+                    } else if (data.sender === 'admin' && data.admin_name) { // Admin name can be added from admin panel
+                        const usernameSpan = document.createElement('span');
+                        usernameSpan.classList.add('chat-message-username');
+                        usernameSpan.textContent = data.admin_name + ":";
+                        messageDiv.appendChild(usernameSpan);
+                    } else if (data.sender === 'admin' && !data.admin_name) { // Default admin label if no name
+                        const usernameSpan = document.createElement('span');
+                        usernameSpan.classList.add('chat-message-username');
+                        usernameSpan.textContent = "Admin:";
+                        messageDiv.appendChild(usernameSpan);
+                    }
+                    messageDiv.appendChild(document.createTextNode(data.message)); // Add message text node
+
+                    chatMessagesDiv.appendChild(messageDiv);
+                });
+                chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight; // Scroll to bottom
+            }, (errorObject) => {
+                console.log("The read failed: " + errorObject.name);
+            });
+        }
+
+        function sendMessage() {
+            const chatInput = document.getElementById('chat-input');
+            const messageText = chatInput.value.trim();
+
+            if (messageText === "") {
+                return; // Don't send empty messages
+            }
+
+            // Ensure the user is logged in before sending a message
+            if (!auth.currentUser || !userChatRef) {
+                alert("Please log in to use the support chat.");
+                return;
+            }
+            
+            // Push message to Firebase, including the globally stored username
+            // The message is stored under the fixedUserUID path, making it private to this user
+            userChatRef.push({
+                sender: "user", // Indicates message is from the user
+                username: loggedInUsername, // Use the globally stored username
+                message: messageText,
+                timestamp: Date.now()
+            }).then(() => {
+                // Message successfully sent
+                chatInput.value = ''; // Clear the input field
+            }).catch(error => {
+                console.error("Error sending message:", error);
+            });
+        }
+
+        // --- Ad Loading Function ---
+        function loadAds() {
+            const adSpace = document.getElementById('dynamic-ad-space');
+            adsRef.orderByChild('status').equalTo('active').on('value', (snapshot) => {
+                adSpace.innerHTML = ''; // Clear existing content
+
+                if (!snapshot.exists()) {
+                    // If no active ads, display default message
+                    adSpace.innerHTML = `
+                        <h3>📢 গুরুত্বপূর্ণ ঘোষণা!</h3>
+                        <p>আমাদের নতুন অফারগুলো দেখুন! দ্রুত টপ-আপ করুন এবং আকর্ষণীয় ডিসকাউন্ট উপভোগ করুন।</p>
+                        <p>যোগাযোগের জন্য: <a href="tel:+8801234567890">01234567890</a></p>
+                    `;
+                    return;
+                }
+
+                const ads = [];
+                snapshot.forEach(childSnapshot => {
+                    ads.push(childSnapshot.val());
+                });
+
+                // For simplicity, let's just display the first active ad found
+                if (ads.length > 0) {
+                    const activeAd = ads[0]; // You might want to implement a rotation or selection logic here
+                    if (activeAd.type === 'custom-banner' && activeAd.imageUrl && activeAd.targetUrl) {
+                        adSpace.innerHTML = `
+                            <a href="${activeAd.targetUrl}" target="_blank">
+                                <h3>${activeAd.name || 'Special Offer!'}</h3>
+                                <img src="${activeAd.imageUrl}" alt="${activeAd.name || 'Advertisement'}">
+                                <p>Click to learn more!</p>
+                            </a>
+                        `;
+                    } else {
+                        // Handle other ad types or just display a generic message
+                        adSpace.innerHTML = `
+                            <h3>📢 ${activeAd.name || 'New Announcement!'}</h3>
+                            <p>Check out our latest offers!</p>
+                            ${activeAd.targetUrl ? `<p><a href="${activeAd.targetUrl}" target="_blank">Click here!</a></p>` : ''}
+                        `;
+                    }
+                }
+            }, (errorObject) => {
+                console.error("Failed to load ads:", errorObject);
+                adSpace.innerHTML = `
+                    <h3>📢 গুরুত্বপূর্ণ ঘোষণা!</h3>
+                    <p>বিজ্ঞাপন লোড করতে সমস্যা হয়েছে।</p>
+                    <p>যোগাযোগের জন্য: <a href="tel:+8801234567890">01234567890</a></p>
+                `;
+            });
+        }
+
+
+        // Logout function
+        function logout() {
+            auth.signOut().then(() => {
+                // Sign-out successful.
+                alert("You have been logged out.");
+                // Reset global variables and UI
+                currentBalance = 0;
+                loggedInUsername = "GuestUser";
+                userRef = null;
+                userChatRef = null;
+                updateBalanceDisplay();
+                document.getElementById('display-username').textContent = loggedInUsername;
+                
+                // Redirect to the login page (or show login options)
+                window.location.href = 'login.html'; // <--- IMPORTANT: Ensure you have a login.html file
+            }).catch((error) => {
+                // An error happened.
+                console.error("Error during logout:", error);
+                alert("Logout failed: " + error.message);
+            });
+        }
+
+        // Allow sending message with Enter key
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Initially show dashboard and initialize user data (including real-time balance listener)
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeUser(); 
+            showSection('dashboard');
+
+            // --- IMPORTANT: For testing logout functionality ---
+            // This will sign in an anonymous user if no one is logged in.
+            // REMOVE or replace with your actual login logic in a production environment.
+            // For a production app, you'd likely have a dedicated login/signup flow
+            // before a user reaches this page.
+            auth.onAuthStateChanged(user => {
+                if (!user) {
+                    auth.signInAnonymously().catch((error) => {
+                        console.error("Error signing in anonymously:", error);
+                        // Optionally, redirect to a login page here if anonymous is not desired
+                        // window.location.href = 'login.html';
+                    });
+                }
+            });
+            // --- End of IMPORTANT section ---
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>G.A Top up house - Auth</title>
+  <style>
+    :root {
+      --primary-color: #4a90e2;
+      --bg-color: #f0f2f5;
+      --white: #ffffff;
+      --error-color: #e74c3c;
+      --success-color: #2ecc71;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(120deg, #dbeafe, #f0f2f5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      background-color: var(--white);
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    .header {
+      background: var(--primary-color);
+      padding: 25px;
+      text-align: center;
+      color: white;
+    }
+
+    .header h1 {
+      font-size: 1.8em;
+    }
+
+    .auth-form {
+      padding: 30px 25px 20px;
+    }
+
+    .auth-form h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 25px;
+      font-size: 1.4em;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    .input-group label {
+      font-size: 0.95em;
+      color: #444;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      transition: border 0.3s;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    .options {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9em;
+      margin-bottom: 20px;
+    }
+
+    .options a {
+      color: var(--primary-color);
+      text-decoration: none;
+    }
+
+    .btn {
+      background-color: var(--primary-color);
+      color: white;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 1em;
+      transition: background 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background-color: #357bcf;
+    }
+
+    .toggle-form {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9em;
+    }
+
+    .toggle-form a {
+      color: var(--primary-color);
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .error-message {
+      color: var(--error-color);
+      font-size: 0.85em;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    .success-message {
+      color: var(--success-color);
+      font-size: 0.85em;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    #loading {
+      text-align: center;
+      color: var(--primary-color);
+      font-size: 0.9em;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    /* Custom Alert */
+    #customAlert {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var(--success-color);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      font-size: 1em;
+      z-index: 9999;
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(-10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+  </style>
+</head>
+<body>
+  <div id="customAlert">Login successful</div>
+
+  <div class="container">
+    <div class="header">
+      <h1>G.A Top up house</h1>
+    </div>
+
+    <!-- Login Form -->
+    <div class="auth-form" id="loginFormContainer">
+      <h2>Login</h2>
+      <form id="loginForm">
+        <div class="input-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" name="email" placeholder="Enter your email" required />
+        </div>
+        <div class="input-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" name="password" placeholder="Enter your password" required />
+        </div>
+        <div class="options">
+          <a id="forgotPassword">Forgot Password?</a>
+        </div>
+        <div id="loading">Processing...</div>
+        <div class="error-message" id="loginError"></div>
+        <button type="submit" class="btn">Login</button>
+      </form>
+      <div class="toggle-form">
+        <p>Don't have an account? <a id="showRegister">Register Now</a></p>
+      </div>
+    </div>
+
+    <!-- Register Form -->
+    <div class="auth-form hidden" id="registerFormContainer">
+      <h2>Create Account</h2>
+      <form id="registerForm">
+        <div class="input-group">
+          <label for="registerUsername">Username</label>
+          <input type="text" id="registerUsername" name="username" placeholder="Enter your username" required />
+        </div>
+        <div class="input-group">
+          <label for="registerEmail">Email</label>
+          <input type="email" id="registerEmail" name="email" placeholder="Enter your email" required />
+        </div>
+        <div class="input-group">
+          <label for="registerPassword">Password</label>
+          <input type="password" id="registerPassword" name="password" placeholder="Create a password" required />
+        </div>
+        <div id="loading">Processing...</div>
+        <div class="error-message" id="registerError"></div>
+        <button type="submit" class="btn">Register</button>
+      </form>
+      <div class="toggle-form">
+        <p>Already have an account? <a id="showLogin">Login</a></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDLbP9pxW4jJhS4_cRBLu9DFAJcIx-k0bo",
+      authDomain: "geme-top-up-app.firebaseapp.com",
+      databaseURL: "https://geme-top-up-app-default-rtdb.firebaseio.com",
+      projectId: "geme-top-up-app",
+      storageBucket: "geme-top-up-app.appspot.com",
+      messagingSenderId: "546994821414",
+      appId: "1:546994821414:web:ec627ac4e79288e9dd49e7"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const database = firebase.database();
+
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const loginError = document.getElementById('loginError');
+    const registerError = document.getElementById('registerError');
+    const loginFormContainer = document.getElementById('loginFormContainer');
+    const registerFormContainer = document.getElementById('registerFormContainer');
+    const showRegisterLink = document.getElementById('showRegister');
+    const showLoginLink = document.getElementById('showLogin');
+    const forgotPasswordLink = document.getElementById('forgotPassword');
+    const loading = document.getElementById('loading');
+    const customAlert = document.getElementById('customAlert');
+
+    function showCustomAlert(message) {
+      customAlert.textContent = message;
+      customAlert.style.display = 'block';
+      setTimeout(() => {
+        customAlert.style.display = 'none';
+        window.location.href = 'dashboard.html';
+      }, 3000);
+    }
+
+    showRegisterLink.addEventListener('click', () => {
+      loginFormContainer.classList.add('hidden');
+      registerFormContainer.classList.remove('hidden');
+      loginError.textContent = '';
+      registerError.textContent = '';
+    });
+
+    showLoginLink.addEventListener('click', () => {
+      registerFormContainer.classList.add('hidden');
+      loginFormContainer.classList.remove('hidden');
+      loginError.textContent = '';
+      registerError.textContent = '';
+    });
+
+    forgotPasswordLink.addEventListener('click', () => {
+      const email = prompt('Enter your registered email:');
+      if (email) {
+        auth.sendPasswordResetEmail(email)
+          .then(() => alert('Password reset email sent!'))
+          .catch(err => alert('Error: ' + err.message));
+      }
+    });
+
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      registerError.textContent = '';
+      loading.style.display = 'block';
+
+      const username = registerForm.registerUsername.value.trim();
+      const email = registerForm.registerEmail.value.trim();
+      const password = registerForm.registerPassword.value;
+
+      if (password.length < 6) {
+        loading.style.display = 'none';
+        registerError.textContent = 'Password must be at least 6 characters.';
+        return;
+      }
+
+      try {
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        await database.ref('users/' + user.uid).set({
+          username: username,
+          email: email,
+          createdAt: firebase.database.ServerValue.TIMESTAMP
+        });
+
+        alert('Registration successful! Now you can login.');
+        registerForm.reset();
+        showLoginLink.click();
+        loginForm.loginEmail.value = email;
+      } catch (error) {
+        let message = 'Registration failed: ' + error.message;
+        if (error.code === 'auth/email-already-in-use') {
+          message = 'This email is already registered.';
+        } else if (error.code === 'auth/invalid-email') {
+          message = 'Invalid email address.';
+        }
+        registerError.textContent = message;
+      } finally {
+        loading.style.display = 'none';
+      }
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.textContent = '';
+      loading.style.display = 'block';
+
+      const email = loginForm.loginEmail.value.trim();
+      const password = loginForm.loginPassword.value;
+
+      try {
+        const userCredential = await auth.signInWithEmailAndPassword(email, password);
+        showCustomAlert('Login successful');
+      } catch (error) {
+        let message = 'Login failed: ' + error.message;
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+          message = 'Invalid email or password.';
+        } else if (error.code === 'auth/invalid-email') {
+          message = 'Invalid email format.';
+        }
+        loginError.textContent = message;
+      } finally {
+        loading.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
